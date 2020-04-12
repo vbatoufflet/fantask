@@ -1,8 +1,6 @@
 package fantask
 
-import (
-	"context"
-)
+import "context"
 
 // Task is a group task interface.
 type Task interface {
