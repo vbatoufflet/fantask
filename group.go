@@ -2,6 +2,8 @@ package fantask
 
 import (
 	"context"
+	"os"
+	"os/signal"
 )
 
 // Group is a tasks group.
@@ -23,6 +25,19 @@ func (g *Group) Add(task Task) *Group {
 
 // Cancel cancels the group execution context.
 func (g *Group) Cancel() {
+	if g.cancel != nil {
+		g.cancel()
+	}
+}
+
+// CancelWithSignals cancels the group execution context when signals are
+// received. If no signals provided, all signals will be handled.
+func (g *Group) CancelWithSignals(sig ...os.Signal) {
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, sig...)
+
+	<-ch
+
 	if g.cancel != nil {
 		g.cancel()
 	}

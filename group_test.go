@@ -3,6 +3,7 @@ package fantask
 import (
 	"context"
 	"errors"
+	"syscall"
 	"testing"
 	"time"
 
@@ -75,6 +76,31 @@ func Test_GroupCancel(t *testing.T) {
 
 	time.Sleep(100 * time.Millisecond)
 	g.Cancel()
+
+	select {
+	case err := <-errCh:
+		assert.Nil(t, err)
+
+	case <-time.After(1 * time.Second):
+		assert.Fail(t, "timeout reached")
+	}
+}
+
+func Test_GroupCancelWithSignals(t *testing.T) {
+	g := NewGroup().
+		Add(TaskFunc(func(ctx context.Context) error { <-ctx.Done(); return nil })).
+		Add(TaskFunc(func(ctx context.Context) error { <-ctx.Done(); return nil }))
+
+	errCh := make(chan error)
+
+	go func() { errCh <- g.Run(context.Background()) }()
+
+	go g.CancelWithSignals(syscall.SIGUSR1)
+
+	time.Sleep(100 * time.Millisecond)
+
+	err := syscall.Kill(syscall.Getpid(), syscall.SIGUSR1)
+	assert.Nil(t, err)
 
 	select {
 	case err := <-errCh:
