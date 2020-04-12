@@ -15,7 +15,7 @@ func NewGroup() *Group {
 	return &Group{}
 }
 
-// Add registers a new task into the tasks group.
+// Add registers a new task into the group.
 func (g *Group) Add(task Task) *Group {
 	g.tasks = append(g.tasks, task)
 	return g
@@ -28,7 +28,7 @@ func (g *Group) Cancel() {
 	}
 }
 
-// Run starts all the group's tasks, waiting for termination.
+// Run starts all registered group tasks, waiting for termination.
 func (g *Group) Run(ctx context.Context) error {
 	if len(g.tasks) == 0 {
 		return nil
@@ -39,6 +39,7 @@ func (g *Group) Run(ctx context.Context) error {
 
 	// Start all tasks
 	errCh := make(chan error, len(g.tasks))
+
 	for _, task := range g.tasks {
 		go func(task Task) {
 			errCh <- task.Run(ctx)
@@ -47,6 +48,7 @@ func (g *Group) Run(ctx context.Context) error {
 
 	// Wait for first task to stop, then cancel context
 	err := <-errCh
+
 	g.cancel()
 
 	// Wait for remainding tasks

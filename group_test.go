@@ -13,6 +13,7 @@ func Test_GroupEmpty(t *testing.T) {
 	g := NewGroup()
 
 	errCh := make(chan error)
+
 	go func() { errCh <- g.Run(context.Background()) }()
 
 	select {
@@ -27,10 +28,11 @@ func Test_GroupEmpty(t *testing.T) {
 func Test_GroupOne(t *testing.T) {
 	taskErr := errors.New("foo")
 
-	g := NewGroup()
-	g.Add(TaskFunc(func(context.Context) error { return taskErr }))
+	g := NewGroup().
+		Add(TaskFunc(func(context.Context) error { return taskErr }))
 
 	errCh := make(chan error)
+
 	go func() { errCh <- g.Run(context.Background()) }()
 
 	select {
@@ -45,11 +47,12 @@ func Test_GroupOne(t *testing.T) {
 func Test_GroupMany(t *testing.T) {
 	taskErr := errors.New("foo")
 
-	g := NewGroup()
-	g.Add(TaskFunc(func(context.Context) error { return taskErr }))
-	g.Add(TaskFunc(func(ctx context.Context) error { <-ctx.Done(); return nil }))
+	g := NewGroup().
+		Add(TaskFunc(func(context.Context) error { return taskErr })).
+		Add(TaskFunc(func(ctx context.Context) error { <-ctx.Done(); return nil }))
 
 	errCh := make(chan error)
+
 	go func() { errCh <- g.Run(context.Background()) }()
 
 	select {
@@ -62,11 +65,12 @@ func Test_GroupMany(t *testing.T) {
 }
 
 func Test_GroupCancel(t *testing.T) {
-	g := NewGroup()
-	g.Add(TaskFunc(func(ctx context.Context) error { <-ctx.Done(); return nil }))
-	g.Add(TaskFunc(func(ctx context.Context) error { <-ctx.Done(); return nil }))
+	g := NewGroup().
+		Add(TaskFunc(func(ctx context.Context) error { <-ctx.Done(); return nil })).
+		Add(TaskFunc(func(ctx context.Context) error { <-ctx.Done(); return nil }))
 
 	errCh := make(chan error)
+
 	go func() { errCh <- g.Run(context.Background()) }()
 
 	time.Sleep(100 * time.Millisecond)

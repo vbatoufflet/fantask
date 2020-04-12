@@ -1,0 +1,7 @@
+---
+linters:
+  disable:
+  - gomnd
+  enable-all: true
+
+# vim: ts=2 sw=2 et
