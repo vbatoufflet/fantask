@@ -1,4 +1,4 @@
 AUTHORS
 =======
 
-* Vincent Batoufflet <vincent@batoufflet.info>
+* Vincent Batoufflet <vincent@batou.dev>

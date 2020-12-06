@@ -1,12 +1,13 @@
-# fantask: tasks group helper [![GoDoc][godoc-badge]][godoc-url]
+# fantask: tasks group helper [![PkgGoDev][pkggo-badge]][pkggo-url]
 
-Simple tasks group helper for Go.
+Concurrent tasks controller for Go.
 
 ## What's for?
 
-This tasks group helper will run multiple tasks concurrently then wait for a
-cancellation or one of the task to stop. If any of this condition is met,
-the main context will be canceled, allowing the remainding tasks to stop.
+This tasks controller runs multiple tasks concurrently then wait for either
+cancellation or one of the task to stop. If any of the conditions is met,
+the main tasks execution context is canceled, allowing the remaining tasks to
+stop.
 
-[godoc-badge]: https://godoc.org/github.com/vbatoufflet/fantask?status.svg
-[godoc-url]: https://godoc.org/github.com/vbatoufflet/fantask
+[pkggo-badge]: https://pkg.go.dev/badge/batou.dev/fantask
+[pkggo-url]: https://pkg.go.dev/batou.dev/fantask
